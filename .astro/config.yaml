@@ -1,2 +1,4 @@
 project:
     name: etl-elt-dag
+postgres:
+    port: 5433

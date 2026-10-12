@@ -1,0 +1,22 @@
+run_id,dag_id,start_time,end_time,rows_extracted,rows_loaded,rows_quarantined,status,details
+manual__2026-10-12T06:06:47.354196+00:00,nammamart_etl_imtiyaz,2026-10-12 06:06:49.765873,2026-10-12 06:06:49.986573,5212,1896,1016,SUCCESS,incremental=False; inserted=0; updated=0
+manual__2026-10-12T06:07:21.057591+00:00,nammamart_etl_imtiyaz,2026-10-12 06:07:23.451180,2026-10-12 06:07:23.798392,5212,1896,1016,SUCCESS,incremental=False; inserted=0; updated=0
+manual__2026-10-12T06:07:30.249733+00:00,nammamart_elt_imtiyaz,2026-10-12 06:07:32.500741,2026-10-12 06:07:34.075951,5212,2021,1041,SUCCESS,incremental=False
+manual__2026-10-12T06:17:34.809322+00:00,nammamart_etl_imtiyaz,2026-10-12 06:17:37.179853,2026-10-12 06:17:37.540323,5372,2021,1044,SUCCESS,incremental=True; inserted=125; updated=7
+manual__2026-10-12T06:17:43.923414+00:00,nammamart_elt_imtiyaz,2026-10-12 06:17:45.928005,2026-10-12 06:17:47.398250,5212,2021,1041,SUCCESS,incremental=False
+manual__2026-10-12T06:21:50.042018+00:00,nammamart_etl_imtiyaz,2026-10-12 06:23:56.821966,2026-10-12 06:23:56.823785,0,0,0,FAILED,Upstream task failed before processing
+manual__2026-10-12T06:25:18.005307+00:00,nammamart_etl_imtiyaz,2026-10-12 06:25:20.694560,2026-10-12 06:25:21.287492,5372,2021,1044,SUCCESS,incremental=True; inserted=125; updated=7; report_complete=1
+scheduled__2026-10-12T03:30:00+00:00,nammamart_etl_imtiyaz,2026-10-12 06:30:45.351768,2026-10-12 06:30:47.522636,5372,2021,1044,SUCCESS,incremental=True; inserted=125; updated=7; report_complete=1
+manual__2026-10-12T06:25:36.252757+00:00,nammamart_etl_imtiyaz,2026-10-12 06:31:13.486836,2026-10-12 06:31:15.476686,5372,2021,1044,SUCCESS,incremental=True; inserted=125; updated=7; report_complete=1
+scheduled__2026-10-12T03:30:00+00:00,nammamart_elt_imtiyaz,2026-10-12 06:33:49.467827,2026-10-12 06:33:52.859187,5212,2021,1041,SUCCESS,incremental=False; report_complete=1
+manual__2026-10-12T06:34:07.746147+00:00,nammamart_elt_imtiyaz,2026-10-12 06:34:11.965279,2026-10-12 06:34:13.784923,5212,2021,1041,SUCCESS,incremental=False; report_complete=1
+manual__2026-10-12T06:35:22.954292+00:00,nammamart_elt_imtiyaz,2026-10-12 06:38:22.567082,2026-10-12 06:38:25.441237,5212,2021,1041,SUCCESS,incremental=False; report_complete=1
+manual__2026-10-12T06:53:56.129047+00:00,nammamart_elt_imtiyaz,2026-10-12 06:53:58.845987,2026-10-12 06:54:00.557048,5212,2021,1041,SUCCESS,incremental=False; report_complete=1
+etl_baseline_20261012,nammamart_etl_imtiyaz,2026-10-12 11:31:59.326097,2026-10-12 11:31:59.538368,5212,1896,1016,SUCCESS,incremental=False; inserted=0; updated=0
+elt_baseline_20261012,nammamart_elt_imtiyaz,2026-10-12 11:34:02.639262,2026-10-12 11:34:03.901175,5212,1896,1016,SUCCESS,incremental=False
+etl_increment_20261012,nammamart_etl_imtiyaz,2026-10-12 11:35:45.070659,2026-10-12 11:35:45.420213,5372,2021,1044,SUCCESS,incremental=True; inserted=125; updated=7
+elt_increment_20261012,nammamart_elt_imtiyaz,2026-10-12 11:35:45.491110,2026-10-12 11:35:48.193307,5372,2021,1041,SUCCESS,incremental=True
+etl_increment_rerun_20261012,nammamart_etl_imtiyaz,2026-10-12 11:36:01.878187,2026-10-12 11:36:02.123598,5372,2021,1044,SUCCESS,incremental=True; inserted=125; updated=7
+elt_increment_rerun_20261012,nammamart_elt_imtiyaz,2026-10-12 11:36:02.173687,2026-10-12 11:36:03.332195,5372,2021,1041,SUCCESS,incremental=True
+etl_persist_increment_20261012,nammamart_etl_imtiyaz,2026-10-12 11:42:23.106002,2026-10-12 11:42:23.370116,5372,2021,1044,SUCCESS,incremental=True; inserted=125; updated=7
+etl_scheduled_after_increment_20261012,nammamart_etl_imtiyaz,2026-10-12 11:42:23.423944,2026-10-12 11:42:23.640491,5372,2021,1044,SUCCESS,incremental=True; inserted=125; updated=7

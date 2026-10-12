@@ -13,3 +13,8 @@ airflow.db
 .astro/*.local.yml
 .astro/*.local.yaml
 test_api.py 
+include/quarantine/
+include/warehouse_*.duckdb*
+include/warehouse_*.lock
+evidence/runtime/
+.pytest_cache/
