@@ -2,7 +2,7 @@
 
 Cohort 4 · Insight Global · published 12 October 2026
 
-Start with [SUBMISSION.md](SUBMISSION.md) for the completed ETL/ELT comparison, observed test results, business answers, governance decisions, and limitations. The [query evidence](evidence/results/QUERY_RESULTS.md) contains the six required SQL answers and links to actual ETL and ELT result files. [Screenshot evidence](evidence/screenshots/README.md) includes both successful task graphs; schedule and local query/quarantine screenshots are still outstanding. Exported CSV results are not represented as UI screenshots.
+Start with [SUBMISSION.md](SUBMISSION.md) for the completed ETL/ELT comparison, observed test results, business answers, governance decisions, and limitations. The [query evidence](evidence/results/QUERY_RESULTS.md) contains the six required SQL answers and links to actual ETL and ELT result files. The [screenshot index](evidence/screenshots/README.md) includes successful task graphs, schedule/next-run Airflow pages, and clearly labeled previews of actual exported quality, audit, reconciliation, and product-quarantine data.
 
 The two assignment DAGs are `nammamart_etl_imtiyaz` and `nammamart_elt_imtiyaz`. On this checkout, start Docker and run `astro dev start`; local Airflow uses `http://nammamart-pipeline.localhost:6563`, not the stock `localhost:8080` shown in the Astro template below. Run `astro dev run dags list-import-errors` to check DAG loading and `python -m pytest -q tests/test_nammamart_assignment.py` in an environment with `pandas`, `duckdb`, `pendulum`, and `pytest` installed for the scenario tests.
 

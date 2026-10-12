@@ -6,6 +6,16 @@ The following authentic Airflow graph exports were downloaded on 12 October 2026
 - [ELT green task graph](elt_graph_success.png)
 - [ETL extraction retry in progress](etl_graph_retry.png) — `extract_products` is `up_for_retry`; downstream tasks are not yet complete. This is a failure-in-progress view, not a failed-run or recovered-run screenshot.
 
-These graph exports omit the surrounding Airflow page, so they do **not** prove the schedule or next-run time. The schedule (`0 9 * * 1-6`) and next run (13 October 2026, 09:00 IST) were observed in Airflow and recorded in `SUBMISSION.md`, but a page screenshot was not saved. The exported CSVs for the quality scorecard, run audit, and payment reconciliation are real query results, not UI screenshots. A screenshot of a row-level quarantine view has not been saved. Do not describe the full screenshot checklist as complete.
+The following full Airflow page captures show each enabled DAG's schedule (`0 9 * * 1-6`), successful latest run, next run (13 October 2026, 09:00 IST), and the UI timezone offset `+05:30`:
 
-Still to capture if possible: schedule and next-run time; one local quarantine view (with customer details obscured); query results from `dq_results`, `pipeline_runs`, and payment reconciliation. The local hostname and Airflow run IDs are not public links.
+- [ETL schedule and next run](etl_schedule_next_run.png)
+- [ELT schedule and next run](elt_schedule_next_run.png)
+
+The remaining captures show **local previews of actual exported warehouse CSVs**, rendered by [local_preview.html](../results/local_preview.html). They are not Airflow or DuckDB-console screenshots:
+
+- [Product quarantine preview](quarantine_products_preview.png) — all ten rows from the [PII-free product quarantine export](../results/quarantine_products.csv), including `failure_reason`.
+- [Quality scorecard preview](dq_results_preview.png) — first 12 rows of [dq_results.csv](../results/dq_results.csv).
+- [Run-audit preview](pipeline_runs_preview.png) — first 12 rows of [pipeline_runs.csv](../results/pipeline_runs.csv).
+- [Payment reconciliation preview](payment_reconciliation_preview.png) — first 12 rows of [payment_reconciliation.csv](../results/payment_reconciliation.csv).
+
+The exported CSVs, not the preview images, are the complete query results. The local hostname and Airflow run IDs are not public links. The screenshots substantiate local execution and exported evidence; they do not establish a production 9 AM SLA or an LMS grading result.

@@ -1,0 +1,11 @@
+file,row_key,_source_row,failure_reason
+products.csv,P0019,20,valid_cost
+products.csv,P0030,152,unique_key
+products.csv,P0051,52,product_category_present
+products.csv,P0060,61,product_category_present
+products.csv,P0068,69,product_category_present
+products.csv,P0073,74,valid_cost
+products.csv,P0074,75,valid_cost
+products.csv,P0109,110,positive_mrp; valid_cost
+products.csv,P0117,118,valid_cost
+products.csv,P0140,153,unique_key

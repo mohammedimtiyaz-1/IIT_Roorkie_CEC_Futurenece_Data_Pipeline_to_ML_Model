@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NammaMart local evidence preview</title>
+<style>
+  body { font: 15px system-ui, sans-serif; margin: 28px; color: #17202a; background: #f6f8fb; }
+  h1 { margin: 0 0 6px; font-size: 26px; }
+  .note { color: #516070; margin: 0 0 20px; }
+  .meta { display: flex; gap: 16px; margin: 0 0 16px; flex-wrap: wrap; }
+  .pill { border: 1px solid #bcccdc; background: white; padding: 7px 11px; border-radius: 8px; }
+  .table-wrap { overflow-x: auto; background: white; border: 1px solid #d9e1e8; border-radius: 10px; }
+  table { border-collapse: collapse; width: max-content; min-width: 100%; }
+  th, td { padding: 9px 11px; border-bottom: 1px solid #e5ebf0; text-align: left; white-space: nowrap; }
+  th { background: #eaf1f8; position: sticky; top: 0; }
+  tr:nth-child(even) { background: #f9fbfd; }
+  .foot { margin-top: 16px; color: #516070; }
+</style>
+<h1 id="title">NammaMart local evidence preview</h1>
+<p class="note">This page displays an exported CSV from the local DuckDB warehouse. It is a data preview, not an Airflow or database-console screenshot.</p>
+<div class="meta"><span class="pill" id="source"></span><span class="pill" id="count"></span></div>
+<div class="table-wrap"><table id="table"></table></div>
+<p class="foot">The full CSV, SQL, and provenance are in the repository. This preview shows up to 12 data rows to keep the screenshot readable.</p>
+<script>
+  const views = {
+    quarantine: ['Product quarantine (no customer fields)', 'quarantine_products.csv'],
+    quality: ['Data-quality scorecard', 'dq_results.csv'],
+    audit: ['Pipeline run audit', 'pipeline_runs.csv'],
+    reconciliation: ['Payment reconciliation', 'payment_reconciliation.csv']
+  };
+  const key = new URLSearchParams(location.search).get('view') || 'quarantine';
+  const [title, file] = views[key] || views.quarantine;
+  document.querySelector('#title').textContent = title;
+  document.querySelector('#source').textContent = 'Source: evidence/results/' + file;
+  function parseCsv(input) {
+    const rows = []; let row = [], cell = '', quoted = false;
+    for (let i = 0; i < input.length; i++) {
+      const ch = input[i];
+      if (ch === '"' && quoted && input[i + 1] === '"') { cell += '"'; i++; }
+      else if (ch === '"') quoted = !quoted;
+      else if (ch === ',' && !quoted) { row.push(cell); cell = ''; }
+      else if ((ch === '\n' || ch === '\r') && !quoted) {
+        if (ch === '\r' && input[i + 1] === '\n') i++;
+        row.push(cell); if (row.some(value => value !== '')) rows.push(row);
+        row = []; cell = '';
+      } else cell += ch;
+    }
+    if (cell || row.length) { row.push(cell); rows.push(row); }
+    return rows;
+  }
+  fetch(file).then(response => { if (!response.ok) throw Error(response.status); return response.text(); }).then(csv => {
+    const [headers, ...rows] = parseCsv(csv);
+    document.querySelector('#count').textContent = rows.length + ' exported rows; first ' + Math.min(12, rows.length) + ' shown';
+    const table = document.querySelector('#table');
+    const head = table.createTHead().insertRow();
+    for (const value of headers) { const th = document.createElement('th'); th.textContent = value; head.appendChild(th); }
+    const body = table.createTBody();
+    for (const row of rows.slice(0, 12)) {
+      const tr = body.insertRow();
+      for (const value of row) { const td = tr.insertCell(); td.textContent = value; }
+    }
+  }).catch(error => { document.querySelector('#count').textContent = 'Preview unavailable: ' + error.message; });
+</script>
+</html>
