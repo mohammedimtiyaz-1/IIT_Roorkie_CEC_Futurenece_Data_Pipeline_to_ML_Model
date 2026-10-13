@@ -11,6 +11,11 @@ The following full Airflow page captures show each enabled DAG's schedule (`0 9 
 - [ETL schedule and next run](etl_schedule_next_run.png)
 - [ELT schedule and next run](elt_schedule_next_run.png)
 
+The first scheduled run on 13 October provides a stricter timing check. Both DAGs succeeded, but their 09:00 IST logical date was followed by a 09:46:17 start and 09:46:42 finish. These are authentic Airflow run pages, not an on-time SLA result:
+
+- [ETL scheduled run, 13 October](etl_scheduled_2026-10-13.png)
+- [ELT scheduled run, 13 October](elt_scheduled_2026-10-13.png)
+
 The remaining captures show **local previews of actual exported warehouse CSVs**, rendered by [local_preview.html](../results/local_preview.html). They are not Airflow or DuckDB-console screenshots:
 
 - [Product quarantine preview](quarantine_products_preview.png) — all ten rows from the [PII-free product quarantine export](../results/quarantine_products.csv), including `failure_reason`.
