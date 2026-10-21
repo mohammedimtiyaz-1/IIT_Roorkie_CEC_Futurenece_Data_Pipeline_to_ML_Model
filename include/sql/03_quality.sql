@@ -15,7 +15,7 @@ WITH checks AS (
   UNION ALL SELECT 'orders_not_future','Timeliness','Critical',COUNT(*),
     COUNT(*) FILTER (WHERE failure_reason LIKE '%not_future_order%') FROM stg_orders
   UNION ALL SELECT 'orders_freshness','Timeliness','Warning',COUNT(*),
-    CASE WHEN MAX(TRY_CAST(order_ts AS TIMESTAMP)) < CURRENT_TIMESTAMP-INTERVAL '1 day'
+    CASE WHEN MAX(TRY_CAST(order_ts AS TIMESTAMP)) < (SELECT as_of_ts FROM run_context)-INTERVAL '1 day'
       THEN 1 ELSE 0 END FROM latest_orders
   UNION ALL SELECT 'orders_volume','Completeness','Warning',COUNT(*),
     CASE WHEN COUNT(*) < 1000 THEN 1 ELSE 0 END FROM latest_orders

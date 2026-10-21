@@ -40,18 +40,21 @@ def _append_raw(con, file_path: Path, name: str, run_id: str) -> int:
 
 
 def run_elt(data_dir: Path = DATA, warehouse: Path = WAREHOUSE,
-            run_id: Optional[str] = None, incremental: bool = False) -> Dict[str, int]:
+            run_id: Optional[str] = None, incremental: bool = False,
+            as_of: Optional[datetime] = None) -> Dict[str, int]:
     """Ingest raw records, run SQL layers, and record actual outcome."""
     run_id = run_id or "manual_" + datetime.now().strftime("%Y%m%dT%H%M%S")
     start = datetime.now()
+    validation_time = as_of or start
     extracted = loaded = quarantined = 0
     try:
         with warehouse_connection(warehouse) as con:
             con.begin()
             try:
                 ensure_audit_tables(con)
-                con.execute("CREATE OR REPLACE TEMP TABLE run_context AS SELECT ?::VARCHAR run_id, ?::VARCHAR dag_id",
-                            [run_id, DAG_ID])
+                con.execute("""CREATE OR REPLACE TEMP TABLE run_context AS
+                    SELECT ?::VARCHAR run_id, ?::VARCHAR dag_id, ?::TIMESTAMP as_of_ts""",
+                            [run_id, DAG_ID, validation_time])
                 for name in FILES:
                     extracted += _append_raw(con, data_dir / f"{name}.csv", name, run_id)
                 if incremental:

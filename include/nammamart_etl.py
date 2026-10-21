@@ -84,10 +84,12 @@ def _quarantine(name: str, failed: pd.DataFrame, run_id: str, root: Path):
 
 
 def run_etl(data_dir: Path = DATA, warehouse: Path = WAREHOUSE,
-            run_id: Optional[str] = None, incremental: bool = False) -> Dict[str, int]:
+            run_id: Optional[str] = None, incremental: bool = False,
+            as_of: Optional[datetime] = None) -> Dict[str, int]:
     """Execute ETL once, with real quality/audit records and idempotent marts."""
     run_id = run_id or "manual_" + datetime.now().strftime("%Y%m%dT%H%M%S")
     start = datetime.now()
+    validation_time = as_of or start
     extracted = loaded = quarantined = 0
     all_checks, all_issues = [], []
     try:
@@ -101,7 +103,7 @@ def run_etl(data_dir: Path = DATA, warehouse: Path = WAREHOUSE,
         extracted = sum(len(frame) for frame in raw.values())
         latest_order = pd.to_datetime(raw["orders"]["order_ts"], errors="coerce").max()
         freshness_failed = int(pd.isna(latest_order) or
-                               latest_order < pd.Timestamp.now() - pd.Timedelta(days=1))
+                               latest_order < pd.Timestamp(validation_time) - pd.Timedelta(days=1))
         for check_name, dimension, checked, failed in (
             ("orders_volume", "Completeness", len(raw["orders"]), int(len(raw["orders"]) < 1000)),
             ("orders_freshness", "Timeliness", len(raw["orders"]), freshness_failed),
@@ -114,7 +116,7 @@ def run_etl(data_dir: Path = DATA, warehouse: Path = WAREHOUSE,
         accepted, failures = {}, {}
         for name in ("customers", "products", "stores"):
             accepted[name], failures[name], issues, checks = validate_frame(
-                name, raw[name], run_id, DAG_ID)
+                name, raw[name], run_id, DAG_ID, asof=validation_time)
             all_issues.extend(issues)
             all_checks.extend(checks)
         product_prices = {str(row.product_id): float(row.mrp)
@@ -124,7 +126,7 @@ def run_etl(data_dir: Path = DATA, warehouse: Path = WAREHOUSE,
                 "stores": accepted["stores"]["store_id"],
                 "product_prices": product_prices}
         accepted["orders"], failures["orders"], issues, checks = validate_frame(
-            "orders", raw["orders"], run_id, DAG_ID, refs)
+            "orders", raw["orders"], run_id, DAG_ID, refs, asof=validation_time)
         all_issues.extend(issues)
         all_checks.extend(checks)
         updates = inserts = 0
@@ -132,7 +134,7 @@ def run_etl(data_dir: Path = DATA, warehouse: Path = WAREHOUSE,
             increment = read_source(data_dir / "orders_2026-10-01_increment.csv", "increment")
             extracted += len(increment)
             inc_ok, inc_bad, issues, checks = validate_frame(
-                "orders", increment, run_id, DAG_ID, refs)
+                "orders", increment, run_id, DAG_ID, refs, asof=validation_time)
             failures["increment"] = inc_bad
             all_issues.extend({**issue, "file": "orders_2026-10-01_increment.csv"}
                               for issue in issues)
@@ -145,7 +147,7 @@ def run_etl(data_dir: Path = DATA, warehouse: Path = WAREHOUSE,
             accepted["orders"] = accepted["orders"].drop_duplicates("order_id", keep="last")
         accepted["payments"], failures["payments"], issues, checks = validate_frame(
             "payments", raw["payments"], run_id, DAG_ID,
-            {"orders": accepted["orders"]["order_id"]})
+            {"orders": accepted["orders"]["order_id"]}, asof=validation_time)
         all_issues.extend(issues)
         all_checks.extend(checks)
 

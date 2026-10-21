@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import shutil
+from datetime import datetime
 from pathlib import Path
 
 import duckdb
@@ -16,6 +17,7 @@ from include.nammamart_elt import run_elt
 RUNNERS = {"etl": run_etl, "elt": run_elt}
 FACT = {"etl": "etl_fact_orders", "elt": "mart_fact_orders"}
 DAG = {"etl": "nammamart_etl_imtiyaz", "elt": "nammamart_elt_imtiyaz"}
+TEST_AS_OF = datetime(2026, 10, 12, 12, 0, 0)
 
 
 @pytest.fixture
@@ -30,7 +32,8 @@ def setup(tmp_path):
 def execute(kind, setup, run_id, incremental=False):
     data, warehouse = setup
     return RUNNERS[kind](data_dir=data, warehouse=warehouse,
-                         run_id=f"{kind}_{run_id}", incremental=incremental)
+                         run_id=f"{kind}_{run_id}", incremental=incremental,
+                         as_of=TEST_AS_OF)
 
 
 def query(setup, sql, parameters=None):

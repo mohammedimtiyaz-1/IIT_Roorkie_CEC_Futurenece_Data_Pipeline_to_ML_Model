@@ -6,6 +6,13 @@ The following authentic Airflow graph exports were downloaded on 12 October 2026
 - [ELT green task graph](elt_graph_success.png)
 - [ETL extraction retry in progress](etl_graph_retry.png) — `extract_products` is `up_for_retry`; downstream tasks are not yet complete. This is a failure-in-progress view, not a failed-run or recovered-run screenshot.
 
+The following are authentic local Airflow UI captures of controlled missing-file recovery. The product source copy was restored afterward, with the same SHA-1 as before the test. On 21 October, ELT `extract_products` failed after three tries; the DAG and audit failed and three downstream tasks were Upstream Failed. The Clear dialog selected only the five affected tasks. After Clear, the same run succeeded with `extract_products` on try 4 and the other four extracts still on try 1:
+
+- [ELT final failed state, 21 October](elt_missing_file_failed_2026-10-21.jpg)
+- [ELT Clear selection: five affected tasks](elt_clear_five_tasks_2026-10-21.jpg)
+- [ELT successful recovery, 21 October](elt_recovery_attempts_2026-10-21.jpg)
+- [ETL successful recovery, 12 October](etl_recovery_attempts.jpg) — shows successful task attempts, but a final failed-state screenshot was not saved for this ETL run.
+
 The following full Airflow page captures show each enabled DAG's schedule (`0 9 * * 1-6`), successful latest run, next run (13 October 2026, 09:00 IST), and the UI timezone offset `+05:30`:
 
 - [ETL schedule and next run](etl_schedule_next_run.png)

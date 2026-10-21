@@ -17,7 +17,7 @@ WITH cleaned AS (
     concat_ws('; ',
       CASE WHEN TRIM(customer_id) = '' THEN 'required_key' END,
       CASE WHEN TRY_CAST(signup_date AS DATE) IS NULL THEN 'valid_signup_date' END,
-      CASE WHEN TRY_CAST(signup_date AS DATE) > CURRENT_DATE THEN 'not_future_signup' END
+      CASE WHEN TRY_CAST(signup_date AS DATE) > (SELECT CAST(as_of_ts AS DATE) FROM run_context) THEN 'not_future_signup' END
     ) AS failure_reason,
     concat_ws('; ',
       CASE WHEN NOT regexp_matches(email, '^[^@ ]+@[^@ ]+\\.[^@ ]+$') THEN 'valid_email' END,
@@ -48,7 +48,7 @@ WITH cleaned AS (
       CASE WHEN TRY_CAST(cost_price AS DOUBLE) IS NULL OR TRY_CAST(cost_price AS DOUBLE) < 0
                   OR TRY_CAST(cost_price AS DOUBLE) > TRY_CAST(mrp AS DOUBLE) THEN 'valid_cost' END,
       CASE WHEN TRY_CAST(launch_date AS DATE) IS NULL THEN 'valid_launch_date' END,
-      CASE WHEN TRY_CAST(launch_date AS DATE) > CURRENT_DATE THEN 'not_future_launch' END
+      CASE WHEN TRY_CAST(launch_date AS DATE) > (SELECT CAST(as_of_ts AS DATE) FROM run_context) THEN 'not_future_launch' END
     ) AS failure_reason
   FROM latest_products
 )
@@ -71,7 +71,7 @@ WITH cleaned AS (
       CASE WHEN TRIM(zone) = '' THEN 'store_zone_present' END,
       CASE WHEN TRY_CAST(capacity_orders_per_day AS INTEGER) IS NULL
                   OR TRY_CAST(capacity_orders_per_day AS INTEGER) <= 0 THEN 'valid_store_capacity' END,
-      CASE WHEN TRY_CAST(open_date AS DATE) > CURRENT_DATE THEN 'not_future_opening' END
+      CASE WHEN TRY_CAST(open_date AS DATE) > (SELECT CAST(as_of_ts AS DATE) FROM run_context) THEN 'not_future_opening' END
     ) AS failure_reason,
     CASE WHEN NOT regexp_matches(pincode, '^[0-9]{6}$') THEN 'valid_store_pincode' ELSE '' END AS warning_reason
   FROM latest_stores
@@ -117,7 +117,7 @@ WITH casted AS (
       CASE WHEN TRIM(order_id)='' THEN 'required_key' END,
       CASE WHEN TRIM(customer_id)='' THEN 'required_customer' END,
       CASE WHEN parsed_order_ts IS NULL THEN 'valid_order_timestamp' END,
-      CASE WHEN parsed_order_ts > CURRENT_TIMESTAMP THEN 'not_future_order' END,
+      CASE WHEN parsed_order_ts > (SELECT as_of_ts FROM run_context) THEN 'not_future_order' END,
       CASE WHEN order_status NOT IN ('DELIVERED','CANCELLED','RETURNED') THEN 'valid_order_status' END,
       CASE WHEN payment_mode NOT IN ('UPI','Card','Cash on Delivery','Wallet') THEN 'valid_order_mode' END,
       CASE WHEN quantity IS NULL OR quantity<=0 OR unit_price IS NULL OR unit_price<=0
@@ -181,7 +181,7 @@ WITH casted AS (
       CASE WHEN TRIM(order_id)='' THEN 'required_order_reference' END,
       CASE WHEN valid_order_id IS NULL THEN 'known_payment_order' END,
       CASE WHEN TRY_CAST(payment_ts AS TIMESTAMP) IS NULL THEN 'valid_payment_timestamp' END,
-      CASE WHEN TRY_CAST(payment_ts AS TIMESTAMP)>CURRENT_TIMESTAMP THEN 'not_future_payment' END,
+      CASE WHEN TRY_CAST(payment_ts AS TIMESTAMP)>(SELECT as_of_ts FROM run_context) THEN 'not_future_payment' END,
       CASE WHEN payment_mode NOT IN ('UPI','Card','Cash on Delivery','Wallet') THEN 'valid_payment_mode' END,
       CASE WHEN payment_status NOT IN ('SUCCESS','FAILED','REFUNDED') THEN 'valid_payment_status' END,
       CASE WHEN payment_status='SUCCESS' AND (amount_paid IS NULL OR amount_paid<0)
